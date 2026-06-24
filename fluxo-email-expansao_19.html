@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fluxo de Nutrição — Expansão Delivery Much</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+  :root {
+    --orange:#F85400; --orange-pale:#FFF1EB;
+    --dark:#0F0F0F; --mid:#2A2A2A; --gray:#6B6B6B; --gray-light:#F2F2F2;
+    --green:#16A34A; --green-pale:#DCFCE7;
+    --blue:#1D4ED8; --blue-pale:#DBEAFE;
+    --amber:#D97706; --amber-pale:#FEF3C7;
+    --red:#DC2626; --red-pale:#FEE2E2;
+    --recovery:#7C3AED; --recovery-pale:#EDE9FE;
+    --border:#E5E5E5; --shadow:0 2px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Inter',sans-serif; background:#F0F0F0; min-height:100vh; padding:0; }
+
+  .stats-row { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+  .stat-card { background:white; border-radius:10px; padding:14px 20px; border:1px solid var(--border); box-shadow:var(--shadow); min-width:160px; }
+  .stat-label { font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--gray); margin-bottom:4px; }
+  .stat-value { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:700; color:var(--dark); }
+  .stat-value span { font-size:12px; font-weight:400; color:var(--gray); margin-left:3px; }
+  .stat-note { font-size:10px; color:var(--gray); margin-top:2px; }
+
+  .flow-wrap { background:white; border-radius:12px; border:1px solid var(--border); box-shadow:var(--shadow); overflow-x:auto; }
+  .flow-inner { min-width:1100px; padding:20px 28px 28px; }
+</style>
+</head>
+<body>
+
+<!-- IPM HEADER -->
+<div style="background:#CC0A2B;border-radius:10px 10px 0 0;padding:0;margin-bottom:0;overflow:hidden;box-shadow:0 2px 12px rgba(204,10,43,0.25);">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 28px;">
+
+    <!-- LOGO IPM -->
+    <div style="display:flex;align-items:center;gap:16px;">
+      <svg width="120" height="36" viewBox="0 0 120 36" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="30" font-family="'Space Grotesk','Arial Black',sans-serif" font-size="30" font-weight="800" fill="white" letter-spacing="-1">IPM</text>
+        <text x="2" y="36" font-family="'Inter','Arial',sans-serif" font-size="0" fill="white">sistemas</text>
+      </svg>
+    </div>
+
+    <!-- CENTRO: título do documento -->
+    <div style="text-align:center;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:white;letter-spacing:0.04em;">Fluxo de Nutrição por Email</div>
+      <div style="font-family:'Inter',sans-serif;font-size:10px;color:rgba(255,255,255,0.7);margin-top:2px;">Expansão — Módulo de Saúde · Atende.Net</div>
+    </div>
+
+  </div>
+  <!-- Bottom accent stripe -->
+  <div style="height:3px;background:linear-gradient(90deg,rgba(255,255,255,0.4) 0%,rgba(255,255,255,0.1) 50%,rgba(255,255,255,0) 100%);"></div>
+</div>
+
+<div style="height:16px;"></div>
+
+<div style="padding:0 24px 40px;">
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-label">Total de emails</div>
+    <div class="stat-value">16 <span>máx.</span></div>
+    <div class="stat-note">8 principais + 8 recuperação</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Média semanal</div>
+    <div class="stat-value">4 <span>emails</span></div>
+    <div class="stat-note">~2 principais + 2 recuperação</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Tentativas rec.</div>
+    <div class="stat-value">2 <span>por email</span></div>
+    <div class="stat-note">Máximo recomendado p/ B2B</div>
+  </div>
+</div>
+
+<div style="background:#FFF7ED;border:1.5px dashed #F85400;border-radius:10px;padding:14px 20px;margin-bottom:16px;font-family:'Inter',sans-serif;">
+  <div style="font-size:12px;font-weight:700;color:#F85400;margin-bottom:5px;">⚡ Conversão antecipada — MQL</div>
+  <div style="font-size:11px;color:#78350F;line-height:1.5;">Se o lead agendar uma demonstração com o consultor em qualquer ponto do fluxo (antes da semana 4), o Active Campaign aplica a tag <strong>MQL-Demo-Solicitada</strong> e notifica o time comercial imediatamente.</div>
+</div>
+
+<div class="flow-wrap">
+<div class="flow-inner">
+<!--
+  LAYOUT — 4 colunas de semana, cada coluna cx=160/440/720/1000
+  Cada email box: width=200, height=90
+  Espaçamento vertical generoso: 130px entre boxes, 80px para decisão
+  Colunas: S1 cx=160 (x=60), S2 cx=440 (x=340), S3 cx=720 (x=620), S4 cx=1000 (x=900)
+
+  Y positions:
+    Trigger:        y=30
+    E1:             y=80   (top=80, bot=170)
+    D1:             y=200  (center=235)
+    E1R1:           y=300  (top=300, bot=390)
+    D1b:            y=420  (center=455)
+    ── convergência para E2: y=540
+    E2:             y=540  (top=540, bot=630)
+    D2:             y=660  (center=695)
+    E2R1:           y=760  (top=760, bot=850)
+    D2b:            y=880  (center=915)
+    ── convergência para E3: y=1020
+    E3:             y=1020 (top=1020, bot=1110)
+    D3:             y=1140 (center=1175)
+    E3R1:           y=1280 (top=1280, bot=1370)  ← mais espaço
+    D3b:            y=1400 (center=1435)
+    ── convergência para E4: y=1540
+    E4:             y=1540 (top=1540, bot=1630)
+    D4:             y=1660 (center=1695)
+    E4R1:           y=1760 (top=1760, bot=1850)
+    D4b:            y=1880 (center=1915)
+    End states:     y=1980
+-->
+<svg viewBox="0 0 1160 2180" xmlns="http://www.w3.org/2000/svg"
+     style="width:100%;display:block;font-family:'Inter',sans-serif;">
+<defs>
+  <marker id="ao"  markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5z" fill="#F85400"/></marker>
+  <marker id="ag"  markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5z" fill="#16A34A"/></marker>
+  <marker id="ar"  markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5z" fill="#DC2626"/></marker>
+  <marker id="ap"  markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5z" fill="#7C3AED"/></marker>
+  <marker id="agr" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L0,7 L9,3.5z" fill="#9CA3AF"/></marker>
+</defs>
+
+<!-- ── WEEK BANDS ───────────────────────────────────── -->
+<rect x="20"  y="0" width="280" height="2180" fill="#FFF8F5" opacity=".55"/>
+<rect x="300" y="0" width="280" height="2180" fill="#FFF1EB" opacity=".55"/>
+<rect x="580" y="0" width="280" height="2180" fill="#FFF8F5" opacity=".55"/>
+<rect x="860" y="0" width="280" height="2180" fill="#FFF1EB" opacity=".55"/>
+<line x1="300" y1="0" x2="300" y2="2180" stroke="#F85400" stroke-width="1" opacity=".12"/>
+<line x1="580" y1="0" x2="580" y2="2180" stroke="#F85400" stroke-width="1" opacity=".12"/>
+<line x1="860" y1="0" x2="860" y2="2180" stroke="#F85400" stroke-width="1" opacity=".12"/>
+<text x="160"  y="17" text-anchor="middle" font-size="9" font-weight="700" fill="#F85400" letter-spacing="1.5" font-family="'Space Grotesk',sans-serif">SEMANA 1 — APRESENTAÇÃO</text>
+<text x="440"  y="17" text-anchor="middle" font-size="9" font-weight="700" fill="#C74400" letter-spacing="1.5" font-family="'Space Grotesk',sans-serif">SEMANA 2 — PROVA SOCIAL</text>
+<text x="720"  y="17" text-anchor="middle" font-size="9" font-weight="700" fill="#F85400" letter-spacing="1.5" font-family="'Space Grotesk',sans-serif">SEMANA 3 — DEMONSTRAÇÃO</text>
+<text x="1000" y="17" text-anchor="middle" font-size="9" font-weight="700" fill="#C74400" letter-spacing="1.5" font-family="'Space Grotesk',sans-serif">SEMANA 4 — OBJEÇÕES + FAQ</text>
+
+<!-- ══════════════════════════════════════════════════
+     MACRO helpers (not rendered, just reference):
+     email_box(cx, top, color, label, id, line1, line2, sub)
+     decision(cx, cy, line1, line2)
+     wait_pill(x, y, label)
+     ══════════════════════════════════════════════════ -->
+
+<!-- ── TRIGGER ────────────────────────────────────── -->
+<rect x="60" y="28" width="200" height="28" rx="14" fill="#0F0F0F"/>
+<text x="160" y="47" text-anchor="middle" font-size="11" font-weight="600" fill="white">⚡ Conversão no Active Campaign</text>
+<!-- arrow Trigger→E1 -->
+<line x1="160" y1="56" x2="160" y2="68.0" stroke="#F85400" stroke-width="2" marker-end="url(#ao)"/>
+<text x="170" y="70" font-size="9" fill="#F85400" font-weight="600">5 min</text>
+
+<!-- ── E1 ─────────────────────────────────────────── -->
+<g>
+  <rect x="60" y="78" width="200" height="90" rx="8" fill="white" stroke="#F85400" stroke-width="2"/>
+  <rect x="60" y="78" width="200" height="22" rx="8" fill="#F85400"/>
+  <rect x="60" y="90"  width="200" height="10" fill="#F85400"/>
+  <text x="160" y="94"  text-anchor="middle" font-size="9" font-weight="700" fill="white" letter-spacing=".5">E1 · PRINCIPAL · Dia 0</text>
+  <text x="160" y="116" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">Temos uma proposta</text>
+  <text x="160" y="132" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">para o seu município</text>
+  <text x="160" y="150" text-anchor="middle" font-size="9" fill="#6B6B6B">📎 Material rico · módulo saúde</text>
+</g>
+<!-- E1 → D1 -->
+<line x1="160" y1="168" x2="160" y2="188.0" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#agr)"/>
+
+<!-- ── D1: Abriu E1? ──────────────────────────────── -->
+<polygon points="160.0,193.0 242.0,233.0 160.0,273.0 78.0,233.0" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="160" y="228" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">Abriu E1?</text>
+<text x="160" y="243" text-anchor="middle" font-size="8" fill="#B45309">+2 dias corridos</text>
+
+<!-- D1 NÃO → esq → E1R1 -->
+<line x1="88"  y1="233" x2="28"  y2="233" stroke="#DC2626" stroke-width="1.5"/>
+<line x1="28"  y1="233" x2="28"  y2="298.0" stroke="#DC2626" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="34" y="227" font-size="9" fill="#DC2626" font-weight="700">NÃO</text>
+<text x="8" y="280" font-size="9" fill="#DC2626" transform="rotate(-90,8,280)">+2 dias corridos</text>
+
+<!-- D1 SIM → dir → wait pill, line goes to E2 convergence point -->
+<line x1="242" y1="233" x2="270" y2="233" stroke="#16A34A" stroke-width="1.5"/>
+<text x="236" y="227" font-size="9" fill="#16A34A" font-weight="700">SIM</text>
+<rect x="271" y="222" width="80" height="22" rx="11" fill="#DCFCE7" stroke="#16A34A" stroke-width="1"/>
+<text x="311" y="237" text-anchor="middle" font-size="9" fill="#16A34A" font-weight="700">+1 semana</text>
+<!-- SIM path from D1: goes down to convergence y=540 -->
+<line x1="351" y1="233" x2="351" y2="532" stroke="#16A34A" stroke-width="1.5" stroke-dasharray="5,3"/>
+<line x1="351" y1="532" x2="351" y2="536" stroke="#16A34A" stroke-width="1.5" marker-end="url(#ag)"/>
+
+<!-- ── E1-R1 ────────────────────────────────────────  -->
+<g>
+  <rect x="60" y="310" width="200" height="90" rx="8" fill="white" stroke="#7C3AED" stroke-width="2"/>
+  <rect x="60" y="310" width="200" height="22" rx="8" fill="#7C3AED"/>
+  <rect x="60" y="322" width="200" height="10" fill="#7C3AED"/>
+  <text x="160" y="327" text-anchor="middle" font-size="9" font-weight="700" fill="white" letter-spacing=".5">E1-R1 · RECUPERAÇÃO · +2d</text>
+  <text x="160" y="348" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">Você esqueceu de</text>
+  <text x="160" y="364" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">revisar nossa proposta</text>
+  <text x="160" y="382" text-anchor="middle" font-size="9" fill="#6B6B6B">📎 Reenvio material rico + demo</text>
+</g>
+<!-- E1R1 → D1b -->
+<line x1="160" y1="400" x2="160" y2="410.0" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#agr)"/>
+
+<!-- ── D1b: Abriu E1-R1? ──────────────────────────── -->
+<polygon points="160.0,415.0 242.0,455.0 160.0,495.0 78.0,455.0" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="160" y="450" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">Abriu E1-R1?</text>
+<text x="160" y="465" text-anchor="middle" font-size="8" fill="#B45309">+3 dias corridos</text>
+
+<!-- D1b NÃO → dir tracejado → E2 -->
+<line x1="242" y1="455" x2="270" y2="455" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3"/>
+<line x1="270" y1="455" x2="270" y2="572" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3"/>
+<line x1="270" y1="572" x2="334" y2="572" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ar)"/>
+<text x="234" y="449" font-size="8" fill="#DC2626" font-weight="700">NÃO +3d → E2</text>
+
+<!-- D1b SIM → esq → wait pill → E2 -->
+<line x1="88"  y1="455" x2="28"  y2="455" stroke="#16A34A" stroke-width="1.5"/>
+<line x1="28"  y1="455" x2="28"  y2="558" stroke="#16A34A" stroke-width="1.5"/>
+<line x1="28"  y1="558" x2="334" y2="558" stroke="#16A34A" stroke-width="1.5" marker-end="url(#ag)"/>
+<text x="34" y="449" font-size="9" fill="#16A34A" font-weight="700">SIM</text>
+<rect x="52" y="547" width="80" height="22" rx="11" fill="#DCFCE7" stroke="#16A13A" stroke-width="1"/>
+<text x="92" y="562" text-anchor="middle" font-size="9" fill="#16A34A" font-weight="700">+1 semana</text>
+
+<!-- ── E2 ─────────────────────────────────────────── -->
+<g>
+  <rect x="342" y="540" width="200" height="90" rx="8" fill="white" stroke="#F85400" stroke-width="2"/>
+  <rect x="342" y="540" width="200" height="22" rx="8" fill="#F85400"/>
+  <rect x="342" y="552" width="200" height="10" fill="#F85400"/>
+  <text x="442" y="557" text-anchor="middle" font-size="9" font-weight="700" fill="white" letter-spacing=".5">E2 · PRINCIPAL · Dia ~7</text>
+  <text x="442" y="578" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">Case de Sucesso:</text>
+  <text x="442" y="594" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">Castro – PR</text>
+  <text x="442" y="612" text-anchor="middle" font-size="9" fill="#6B6B6B">🏙️ Prova social regional</text>
+</g>
+<!-- E2 → D2 -->
+<line x1="442" y1="630" x2="442" y2="650.0" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#agr)"/>
+
+<!-- ── D2: Abriu E2? ──────────────────────────────── -->
+<polygon points="442.0,655.0 524.0,695.0 442.0,735.0 360.0,695.0" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="442" y="690" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">Abriu E2?</text>
+<text x="442" y="705" text-anchor="middle" font-size="8" fill="#B45309">+2 dias corridos</text>
+
+<!-- D2 NÃO → esq → E2R1 -->
+<line x1="360" y1="695" x2="308" y2="695" stroke="#DC2626" stroke-width="1.5"/>
+<line x1="308" y1="695" x2="308" y2="752.0" stroke="#DC2626" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="314" y="689" font-size="9" fill="#DC2626" font-weight="700">NÃO</text>
+<text x="290" y="734" font-size="9" fill="#DC2626" transform="rotate(-90,290,734)">+2 dias corridos</text>
+
+<!-- D2 SIM → dir → wait pill → E3 (convergência y=1020) -->
+<line x1="524" y1="695" x2="552" y2="695" stroke="#16A34A" stroke-width="1.5"/>
+<text x="518" y="689" font-size="9" fill="#16A34A" font-weight="700">SIM</text>
+<rect x="553" y="684" width="80" height="22" rx="11" fill="#DCFCE7" stroke="#16A34A" stroke-width="1"/>
+<text x="593" y="699" text-anchor="middle" font-size="9" fill="#16A34A" font-weight="700">+1 semana</text>
+<line x1="633" y1="695" x2="633" y2="1012" stroke="#16A34A" stroke-width="1.5" stroke-dasharray="5,3"/>
+<line x1="633" y1="1020" x2="630.0" y2="1020" stroke="#16A34A" stroke-width="1.5" marker-end="url(#ag)"/>
+
+<!-- ── E2-R1 ────────────────────────────────────────  -->
+<g>
+  <rect x="342" y="760" width="200" height="90" rx="8" fill="white" stroke="#7C3AED" stroke-width="2"/>
+  <rect x="342" y="760" width="200" height="22" rx="8" fill="#7C3AED"/>
+  <rect x="342" y="772" width="200" height="10" fill="#7C3AED"/>
+  <text x="442" y="777" text-anchor="middle" font-size="9" font-weight="700" fill="white" letter-spacing=".5">E2-R1 · RECUPERAÇÃO · +9d</text>
+  <text x="442" y="798" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">Precisamos conversar</text>
+  <text x="442" y="814" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">sobre [Município]</text>
+  <text x="442" y="832" text-anchor="middle" font-size="9" fill="#6B6B6B">🏙️ Personalização {{municipio}}</text>
+</g>
+<!-- E2R1 → D2b -->
+<line x1="442" y1="850" x2="442" y2="870.0" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#agr)"/>
+
+<!-- ── D2b: Abriu E2-R1? ──────────────────────────── -->
+<polygon points="442.0,875.0 524.0,915.0 442.0,955.0 360.0,915.0" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="442" y="910" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">Abriu E2-R1?</text>
+<text x="442" y="925" text-anchor="middle" font-size="8" fill="#B45309">+3 dias corridos</text>
+
+<!-- D2b NÃO → dir tracejado → E3 -->
+<line x1="524" y1="915" x2="552" y2="915" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3"/>
+<line x1="552" y1="915" x2="552" y2="1054" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3"/>
+<line x1="552" y1="1020" x2="614.0" y2="1020" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ar)"/>
+<text x="518" y="909" font-size="8" fill="#DC2626" font-weight="700">NÃO +3d → E3</text>
+
+<!-- D2b SIM → esq → wait pill → E3 -->
+<line x1="360" y1="915" x2="308" y2="915" stroke="#16A34A" stroke-width="1.5"/>
+<line x1="308" y1="915" x2="308" y2="1038" stroke="#16A34A" stroke-width="1.5"/>
+<line x1="308" y1="1020" x2="614.0" y2="1020" stroke="#16A34A" stroke-width="1.5" marker-end="url(#ag)"/>
+<text x="314" y="909" font-size="9" fill="#16A34A" font-weight="700">SIM</text>
+<rect x="334" y="1027" width="80" height="22" rx="11" fill="#DCFCE7" stroke="#16A34A" stroke-width="1"/>
+<text x="374" y="1042" text-anchor="middle" font-size="9" fill="#16A34A" font-weight="700">+1 semana</text>
+
+<!-- ── E3 ─────────────────────────────────────────── -->
+<g>
+  <rect x="622" y="1020" width="200" height="90" rx="8" fill="white" stroke="#F85400" stroke-width="2"/>
+  <rect x="622" y="1020" width="200" height="22" rx="8" fill="#F85400"/>
+  <rect x="622" y="1032" width="200" height="10" fill="#F85400"/>
+  <text x="722" y="1037" text-anchor="middle" font-size="9" font-weight="700" fill="white" letter-spacing=".5">E3 · PRINCIPAL · Dia ~14</text>
+  <text x="722" y="1058" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">Veja o sistema ao vivo —</text>
+  <text x="722" y="1074" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">agende sua demonstração</text>
+  <text x="722" y="1092" text-anchor="middle" font-size="9" fill="#6B6B6B">📅 Convite para demo gratuita · 30 min</text>
+</g>
+<!-- E3 → D3 -->
+<line x1="722" y1="1110" x2="722" y2="1130.0" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#agr)"/>
+
+<!-- ── D3: Abriu E3? ──────────────────────────────── -->
+<polygon points="722.0,1135.0 804.0,1175.0 722.0,1215.0 640.0,1175.0" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="722" y="1170" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">Abriu E3?</text>
+<text x="722" y="1185" text-anchor="middle" font-size="8" fill="#B45309">+2 dias corridos</text>
+
+<!-- D3 NÃO → esq → E3R1 -->
+<line x1="640" y1="1175" x2="588" y2="1175" stroke="#DC2626" stroke-width="1.5"/>
+<line x1="588" y1="1175" x2="588" y2="1272.0" stroke="#DC2626" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="594" y="1169" font-size="9" fill="#DC2626" font-weight="700">NÃO</text>
+<text x="570" y="1234" font-size="9" fill="#DC2626" transform="rotate(-90,570,1234)">+2 dias corridos</text>
+
+<!-- D3 SIM → dir → wait pill → E4 (convergência y=1540) -->
+<line x1="804" y1="1175" x2="832" y2="1175" stroke="#16A34A" stroke-width="1.5"/>
+<text x="798" y="1169" font-size="9" fill="#16A34A" font-weight="700">SIM</text>
+<rect x="833" y="1164" width="80" height="22" rx="11" fill="#DCFCE7" stroke="#16A34A" stroke-width="1"/>
+<text x="873" y="1179" text-anchor="middle" font-size="9" fill="#16A34A" font-weight="700">+1 semana</text>
+<line x1="913" y1="1175" x2="913" y2="1532" stroke="#16A34A" stroke-width="1.5" stroke-dasharray="5,3"/>
+<line x1="913" y1="1540" x2="910.0" y2="1540" stroke="#16A34A" stroke-width="1.5" marker-end="url(#ag)"/>
+
+<!-- ── E3-R1 ────────────────────────────────────────  -->
+<g>
+  <rect x="622" y="1280" width="200" height="90" rx="8" fill="white" stroke="#7C3AED" stroke-width="2"/>
+  <rect x="622" y="1280" width="200" height="22" rx="8" fill="#7C3AED"/>
+  <rect x="622" y="1292" width="200" height="10" fill="#7C3AED"/>
+  <text x="722" y="1297" text-anchor="middle" font-size="9" font-weight="700" fill="white" letter-spacing=".5">E3-R1 · RECUPERAÇÃO · +16d</text>
+  <text x="722" y="1318" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">30 minutos que podem</text>
+  <text x="722" y="1334" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">mudar sua operação</text>
+  <text x="722" y="1352" text-anchor="middle" font-size="9" fill="#6B6B6B">📅 Reforço do convite · CTA demo</text>
+</g>
+<!-- E3R1 → D3b -->
+<line x1="722" y1="1370" x2="722" y2="1390.0" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#agr)"/>
+
+<!-- ── D3b: Abriu E3-R1? ──────────────────────────── -->
+<polygon points="722.0,1395.0 804.0,1435.0 722.0,1475.0 640.0,1435.0" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="722" y="1430" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">Abriu E3-R1?</text>
+<text x="722" y="1445" text-anchor="middle" font-size="8" fill="#B45309">+3 dias corridos</text>
+
+<!-- D3b NÃO → dir tracejado → E4 -->
+<line x1="804" y1="1435" x2="832" y2="1435" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3"/>
+<line x1="832" y1="1435" x2="832" y2="1572" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3"/>
+<line x1="832" y1="1540" x2="894.0" y2="1540" stroke="#DC2626" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#ar)"/>
+<text x="798" y="1429" font-size="8" fill="#DC2626" font-weight="700">NÃO +3d → E4</text>
+
+<!-- D3b SIM → esq → wait pill → E4 -->
+<line x1="640" y1="1435" x2="588" y2="1435" stroke="#16A34A" stroke-width="1.5"/>
+<line x1="588" y1="1435" x2="588" y2="1558" stroke="#16A34A" stroke-width="1.5"/>
+<line x1="588" y1="1540" x2="894.0" y2="1540" stroke="#16A34A" stroke-width="1.5" marker-end="url(#ag)"/>
+<text x="594" y="1429" font-size="9" fill="#16A34A" font-weight="700">SIM</text>
+<rect x="614" y="1547" width="80" height="22" rx="11" fill="#DCFCE7" stroke="#16A34A" stroke-width="1"/>
+<text x="654" y="1562" text-anchor="middle" font-size="9" fill="#16A34A" font-weight="700">+1 semana</text>
+
+<!-- ── E4 ─────────────────────────────────────────── -->
+<g>
+  <rect x="902" y="1540" width="200" height="90" rx="8" fill="white" stroke="#F85400" stroke-width="2"/>
+  <rect x="902" y="1540" width="200" height="22" rx="8" fill="#F85400"/>
+  <rect x="902" y="1552" width="200" height="10" fill="#F85400"/>
+  <text x="1002" y="1557" text-anchor="middle" font-size="9" font-weight="700" fill="white" letter-spacing=".5">E4 · PRINCIPAL · Dia ~21</text>
+  <text x="1002" y="1578" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">Suas dúvidas sobre</text>
+  <text x="1002" y="1594" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">o sistema, respondidas</text>
+  <text x="1002" y="1612" text-anchor="middle" font-size="9" fill="#6B6B6B">❓ FAQ · custos, suporte, tecnologia</text>
+</g>
+<!-- E4 → D4 -->
+<line x1="1002" y1="1630" x2="1002" y2="1650.0" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#agr)"/>
+
+<!-- ── D4: Abriu E4? ──────────────────────────────── -->
+<polygon points="1002.0,1655.0 1084.0,1695.0 1002.0,1735.0 920.0,1695.0" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="1002" y="1690" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">Abriu E4?</text>
+<text x="1002" y="1705" text-anchor="middle" font-size="8" fill="#B45309">+2 dias corridos</text>
+
+<!-- D4 NÃO → baixo → E4R1 -->
+<line x1="1002" y1="1735" x2="1002" y2="1750.0" stroke="#DC2626" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="1012" y="1748" font-size="9" fill="#DC2626" font-weight="700">NÃO +2d</text>
+
+<!-- D4 SIM → dir → end demo  -->
+<line x1="1084" y1="1695" x2="1120" y2="1695" stroke="#16A34A" stroke-width="2"/>
+<line x1="1120" y1="1695" x2="1120" y2="1990" stroke="#16A34A" stroke-width="2" stroke-dasharray="5,3"/>
+<line x1="1120" y1="1990" x2="1112.0" y2="1990" stroke="#16A34A" stroke-width="2" marker-end="url(#ag)"/>
+<text x="1078" y="1689" font-size="8" fill="#16A34A" font-weight="700">SIM</text>
+
+<!-- ── E4-R1 ────────────────────────────────────────  -->
+<g>
+  <rect x="902" y="1760" width="200" height="90" rx="8" fill="white" stroke="#7C3AED" stroke-width="2" stroke-dasharray="7,3"/>
+  <rect x="902" y="1760" width="200" height="22" rx="8" fill="#7C3AED"/>
+  <rect x="902" y="1772" width="200" height="10" fill="#7C3AED"/>
+  <text x="1002" y="1777" text-anchor="middle" font-size="9" font-weight="700" fill="white" letter-spacing=".5">E4-R1 · ÚLTIMA TENT. · +23d</text>
+  <text x="1002" y="1798" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">Ainda com dúvidas?</text>
+  <text x="1002" y="1814" text-anchor="middle" font-size="10" font-weight="700" fill="#0F0F0F">A gente responde tudo</text>
+  <text x="1002" y="1832" text-anchor="middle" font-size="9" fill="#6B6B6B">🏁 Encerramento · últimas respostas</text>
+</g>
+<!-- E4R1 → D4b -->
+<line x1="1002" y1="1850" x2="1002" y2="1870.0" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#agr)"/>
+
+<!-- ── D4b: Abriu E4-R1? ──────────────────────────── -->
+<polygon points="1002.0,1875.0 1084.0,1915.0 1002.0,1955.0 920.0,1915.0" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5"/>
+<text x="1002" y="1910" text-anchor="middle" font-size="10" font-weight="700" fill="#92400E">Abriu E4-R1?</text>
+<text x="1002" y="1925" text-anchor="middle" font-size="9" fill="#B45309">último check</text>
+
+<!-- D4b SIM → dir → end demo -->
+<line x1="1084" y1="1915" x2="1096.0" y2="1915" stroke="#16A34A" stroke-width="2" marker-end="url(#ag)"/>
+<text x="1078" y="1909" font-size="9" fill="#16A34A" font-weight="700">SIM</text>
+
+<!-- D4b NÃO → esq → fim do ciclo -->
+<line x1="930"  y1="1915" x2="870"  y2="1915" stroke="#9CA3AF" stroke-width="1.5"/>
+<line x1="870"  y1="1915" x2="870"  y2="2060" stroke="#9CA3AF" stroke-width="1.5"/>
+<line x1="870"  y1="2060" x2="894.0"  y2="2060" stroke="#9CA3AF" stroke-width="1.5" marker-end="url(#agr)"/>
+<text x="876" y="1909" font-size="9" fill="#9CA3AF" font-weight="700">NÃO</text>
+
+<!-- ── END STATE: Demo Agendada ───────────────────── -->
+<rect x="902" y="1970" width="210" height="52" rx="10" fill="#DBEAFE" stroke="#1D4ED8" stroke-width="2"/>
+<text x="1007" y="1993" text-anchor="middle" font-size="13" font-weight="700" fill="#1D4ED8">🎉 Demo Agendada!</text>
+<text x="1007" y="2012" text-anchor="middle" font-size="10" fill="#1E40AF">Lead entra no pipeline comercial</text>
+
+<!-- ── END STATE: Fim do Ciclo ───────────────────── -->
+<rect x="902" y="2040" width="210" height="52" rx="10" fill="#F2F2F2" stroke="#9CA3AF" stroke-width="1.5"/>
+<text x="1007" y="2063" text-anchor="middle" font-size="13" font-weight="700" fill="#6B6B6B">🏁 Fim do ciclo</text>
+<text x="1007" y="2082" text-anchor="middle" font-size="10" fill="#9CA3AF">Reengajamento passivo ou CRM manual</text>
+
+
+</svg>
+</div>
+</div>
+
+    </div>
+</div><!-- /padding wrapper -->
+
+</body>
+</html>
